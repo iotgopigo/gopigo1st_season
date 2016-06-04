@@ -20,7 +20,6 @@ http://feijoa.jp/laboratory/raspberrypi/julius/
 * Linux上での音声入出力の取得について 
 http://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q10147226120
 
-
 ##画像認識
 * Google Cloud Vision API公式
 https://cloud.google.com/vision/
@@ -32,3 +31,8 @@ http://ytsuda.hateblo.jp/entry/2013/10/18/195742
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS=/xxxxx/MyFirstProject-xxxx.json
 ```
+##翻訳
+* glosbe API公式
+https://glosbe.com/
+* 使い方
+http://roomba.hatenablog.com/entry/2015/07/08/190327
