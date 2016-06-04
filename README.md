@@ -7,6 +7,12 @@ GoPiGoグループ用のリポジトリです。
 * gitの使い方
 https://blog.codecamp.jp/git-github
 
+##音声合成
+* Open JTalk公式ページ 
+http://open-jtalk.sourceforge.net/
+* 使い方
+http://qiita.com/kkoba84/items/b828229c374a249965a9
+
 ##音声認識
 * julius公式ページ 
 http://julius.osdn.jp/index.php
@@ -23,8 +29,6 @@ https://cloud.google.com/vision/
 https://syncer.jp/cloud-vision-api
 * PythonでGoogle APIを使うために
 http://ytsuda.hateblo.jp/entry/2013/10/18/195742
-* 
-http://qiita.com/iuvo-duo/items/8f5542051419ef17b089
 
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS=/xxxxx/MyFirstProject-xxxx.json
