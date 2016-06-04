@@ -42,6 +42,7 @@ http://ytsuda.hateblo.jp/entry/2013/10/18/195742
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS=/xxxxx/MyFirstProject-xxxx.json
 ```
+
 ##翻訳
 * glosbe API公式
 https://glosbe.com/
