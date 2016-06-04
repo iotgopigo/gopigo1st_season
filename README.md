@@ -21,7 +21,7 @@ http://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q10147226120
 https://cloud.google.com/vision/
 * 使い方
 https://syncer.jp/cloud-vision-api
-* 
+* PythonでGoogle APIを使うために
 http://ytsuda.hateblo.jp/entry/2013/10/18/195742
 * 
 http://qiita.com/iuvo-duo/items/8f5542051419ef17b089
