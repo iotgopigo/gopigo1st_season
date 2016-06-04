@@ -28,3 +28,6 @@ https://syncer.jp/cloud-vision-api
 http://ytsuda.hateblo.jp/entry/2013/10/18/195742
 
 http://qiita.com/iuvo-duo/items/8f5542051419ef17b089
+
+export GOOGLE_APPLICATION_CREDENTIALS=/xxxxx/MyFirstProject-xxxx.json
+
