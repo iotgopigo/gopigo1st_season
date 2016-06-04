@@ -20,6 +20,12 @@ http://feijoa.jp/laboratory/raspberrypi/julius/
 * Linux上での音声入出力の取得について 
 http://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q10147226120
 
+##画像取得
+* OpenCV 公式
+http://opencv.org/
+* 使い方
+http://qiita.com/wkentaro/items/3d3bee56445894da879e
+
 ##画像認識
 * Google Cloud Vision API公式
 https://cloud.google.com/vision/
