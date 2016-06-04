@@ -38,7 +38,8 @@ https://cloud.google.com/vision/
 https://syncer.jp/cloud-vision-api
 * PythonでGoogle APIを使うために
 http://ytsuda.hateblo.jp/entry/2013/10/18/195742
-
+* Authenticating with Application Default Credentials
+https://cloud.google.com/vision/docs/auth-template/cloud-api-auth#set_up_an_api_key
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS=/xxxxx/MyFirstProject-xxxx.json
 ```
