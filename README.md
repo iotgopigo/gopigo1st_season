@@ -6,6 +6,11 @@ GoPiGoグループ用のリポジトリです。
 * gitの使い方
 https://blog.codecamp.jp/git-github
 
+##GoPiGo
+GoPiGo2を使用
+* チュートリアル
+http://www.dexterindustries.com/gopigo2-tutorials-documentation/
+
 ##音声合成
 * Open JTalk公式ページ 
 http://open-jtalk.sourceforge.net/
