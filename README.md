@@ -3,7 +3,6 @@ IoT勉強会
 
 GoPiGoグループ用のリポジトリです。
 
-
 * gitの使い方
 https://blog.codecamp.jp/git-github
 
