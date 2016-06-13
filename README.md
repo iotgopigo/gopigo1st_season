@@ -10,6 +10,8 @@ https://blog.codecamp.jp/git-github
 GoPiGo2を使用
 * チュートリアル
 http://www.dexterindustries.com/gopigo2-tutorials-documentation/
+* 関数一覧
+https://github.com/DexterInd/GoPiGo/blob/master/Software/Python/gopigo.py
 
 ##音声合成
 * Open JTalk公式ページ 
