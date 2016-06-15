@@ -26,6 +26,8 @@ http://julius.osdn.jp/index.php
 http://feijoa.jp/laboratory/raspberrypi/julius/
 * Linux上での音声入出力の取得について 
 http://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q10147226120
+* Raspberry Piで音声認識（パフォーマンス改善）
+http://qiita.com/t_oginogin/items/0634000e6713f9174b5f
 
 ##画像取得
 * OpenCV 公式
