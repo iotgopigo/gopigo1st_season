@@ -34,6 +34,8 @@ http://qiita.com/t_oginogin/items/0634000e6713f9174b5f
 http://opencv.org/
 * 使い方
 http://qiita.com/wkentaro/items/3d3bee56445894da879e
+* raspPI用カメラからの映像取得
+http://www.pyimagesearch.com/2015/03/30/accessing-the-raspberry-pi-camera-with-opencv-and-python/
 
 ##画像認識
 * Google Cloud Vision API公式
