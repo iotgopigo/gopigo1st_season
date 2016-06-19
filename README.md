@@ -16,6 +16,8 @@ https://github.com/DexterInd/GoPiGo/blob/master/Software/Python/gopigo.py
 ##音声合成
 * Open JTalk公式ページ 
 http://open-jtalk.sourceforge.net/
+* インストール
+http://server-setting.info/centos/open-jtalk-install.html
 * 使い方
 http://qiita.com/kkoba84/items/b828229c374a249965a9
 
