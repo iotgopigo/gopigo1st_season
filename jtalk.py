@@ -15,6 +15,7 @@ def jtalk(t):
     c.wait()
     aplay = ['aplay','-q','open_jtalk.wav']
     wr = subprocess.Popen(aplay)
+    wr.wait()
 
 def say_datetime():
     d = datetime.now()
