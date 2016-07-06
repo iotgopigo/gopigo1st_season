@@ -14,10 +14,16 @@ logging.basicConfig(level=logging.DEBUG,
 # テスト用					
 # -----------------------------------------------
 def imageRecognition ( mode, keyword, rect ):
-	rect[0] = 0;
-	rect[1] = 0;
-	rect[2] = 320;
-	rect[3] = 480;
+	rect.clear()
+	rect.append(-1)
+	rect.append(-1)
+	rect.append(-1)
+	rect.append(-1)
+	rect[0] = 0
+	rect[1] = 0
+	rect[2] = 320
+	rect[3] = 240
+
 	return True
 
 def enable_servo():
@@ -40,7 +46,7 @@ def serchObject( mode, keyword ):
 	dir = -1				# 方向
 	servo_angle = 0			# サーボ角度
 	find_flag = False		# 発見フラグ
-	rect = [-1,-1,-1,-1]	# 画像認識結果枠(左上x,y,右下x,y)
+	rect = []				# 画像認識結果枠(左上x,y,右下x,y)
 	cam_param = 0.1			# 位置と方向の関係
 
 	# サーボ有効化
