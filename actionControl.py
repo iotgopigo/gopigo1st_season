@@ -16,7 +16,17 @@ import serchObject  # 物体探索機能
 #------------------------------------------------------
 # パラメータ
 #------------------------------------------------------
-MODE_MAX                = 9   # モードの最大数[1〜MODE_MAX]
+MODE_MAX                = 10   # モードの最大数[1〜MODE_MAX]
+#------------------------------------------------------
+#------------------------------------------------------
+# define
+#------------------------------------------------------
+LOGO_DETECTION  = 'LOGO_DETECTION'
+LABEL_DETECTION = 'LABEL_DETECTION'
+FACE_DETECTION  = 'FACE_DETECTION'
+TEXT_DETECTION  = 'TEXT_DETECTION'
+
+
 #------------------------------------------------------
 
 
@@ -24,8 +34,27 @@ MODE_MAX                = 9   # モードの最大数[1〜MODE_MAX]
 # PT用
 #------------------------------------------------------
 def speak(num):
-    if num == 0:
-        print "Go to Campany!"
+
+    text = {
+            "Go to Campany!",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            }
+    
+    if num < 1 || num > 16 :
+        print "out of range"
+
+    print text[num]
+    
     return
 def Audio_Input(num):
     return 1
@@ -74,7 +103,7 @@ def mode1():
     speak(0)
 
     # Panasonicロゴの探索    
-    ret = serchObject(0, "Panasonic", ) # 物体探索
+    ret = serchObject( LOGO_DETECTION, 'Panasonic' ) # 物体探索
     # 探索に失敗した場合
     if ret[0] == -1:
         # 「みつからないよ」と発話 
@@ -105,7 +134,7 @@ def mode2():
 
     # 天気の認識
     rect = []
-    label = imageRecognition(2, "", rect)   # ラベル認識
+    label = imageRecognition( LABEL_DETECTION, "", rect)   # ラベル認識
     if label == "sun"
         # 「今日はいい天気ですね」と発話 
         speak(11)  
@@ -139,7 +168,7 @@ def mode3():
             break
 
     # HELPの探索    
-    ret = serchObject(3, "HELP") # 物体探索
+    ret = serchObject( TEXT_DETECTION, "HELP" ) # OCR
     # 探索に失敗した場合
     if ret[0] == -1:
         # 「みつからないよ」と発話 
@@ -180,7 +209,7 @@ def mode4():
     time.sleep(2) # 2秒待ち
 
     # 課長の探索    
-    ret = serchObject(3, "課長") # 物体探索
+    ret = serchObject( TEXT_DETECTION, "課長" ) # 物体探索
     # 探索に失敗した場合
     if ret[0] == -1:
         # 「みつからないよ」と発話 
@@ -207,7 +236,7 @@ def mode5():
 
     # 表情の認識
     rect = []
-    label = imageRecognition(4, "", rect)   # 表情認識
+    label = imageRecognition( FACE_DETECTION, "", rect)   # 表情認識
 
     if label == "anger"
         # 「やばい、やばい」と発話 
@@ -241,25 +270,125 @@ def mode6():
         if Audio_Input(2) == 2:
             break
     
+    # 「ありがとうございます。課長、よい一日を」と発話 
+    speak(5)    
+      
+    # 180度回転
+    movement( 180, 1, 0 )
+    # 移動待ち
+    moveWait()
+    
     return 7
 
 #------------------------------------------------------
 # 行動7:依頼者の席へ戻る
 #------------------------------------------------------
 def mode7():
+    time.sleep(2) # 2秒待ち
+    
+    # HELPの探索    
+    ret = serchObject( TEXT_DETECTION, "HELP" ) # 物体探索
+    # 探索に失敗した場合
+    if ret[0] == -1:
+        # 「みつからないよ」と発話 
+        speak(10)
+        return 4
+
+    # 回転
+    movement( ret[1], 1, 0 )
+    # 移動待ち
+    moveWait()
+
+    # 移動
+    movement( 0 , 1, ret[0] )
+    # 移動待ち
+    moveWait()
+
     return 8
 
 #------------------------------------------------------
 # 行動8:依頼者へ成果物の報告
 #------------------------------------------------------
 def mode8():
+
+    time.sleep(2) # 2秒待ち
+    
+    # 「お待たせ。はんこもらってきたよ～。」と発話 
+    speak(6)
+
+    # 「ありがとう、バイバイ。」と言われるまで待機
+    while 1:
+        if Audio_Input(3) == 3:
+            break
+
     return 9
 
 #------------------------------------------------------
 # 行動9:ホームへ戻る
 #------------------------------------------------------
 def mode9():
+    
+    time.sleep(2) # 2秒待ち
+    
+    # 「今日はもう帰るね～。お先に失礼しま～す。」と発話 
+    speak(7)
+
+    # Panasonicロゴの探索    
+    ret = serchObject( LOGO_DETECTION, 'Panasonic' ) # 物体探索
+    # 探索に失敗した場合
+    if ret[0] == -1:
+        # 「みつからないよ」と発話 
+        speak(10)
+        return 9
+
+    # 回転
+    movement( ret[1], 1, 0 )
+    # 移動待ち
+    moveWait()
+
+    # 移動
+    movement( 0 , 1, ret[0] )
+    # 移動待ち
+    moveWait()
+    
+    # 「さようならー」と発話 
+    speak(16)
+
+    # -90度回転
+    movement( -90, 1, 0 )
+    # 移動待ち
+    moveWait()
+
+    
     return 10
+
+#------------------------------------------------------
+# 行動10:ホームへ戻る
+#------------------------------------------------------
+def mode10():
+
+    # Nationalロゴの探索    
+    ret = serchObject( LOGO_DETECTION, 'National' ) # 物体探索
+    # 探索に失敗した場合
+    if ret[0] == -1:
+        # 「みつからないよ」と発話 
+        speak(10)
+        return 10
+
+    # 回転
+    movement( ret[1], 1, 0 )
+    # 移動待ち
+    moveWait()
+
+    # 移動
+    movement( 0 , 1, ret[0] )
+    # 移動待ち
+    moveWait()
+    
+    # 「今日も、いい仕事したな～」と発話 
+    speak(15)
+
+    return 11
 
 #------------------------------------------------------
 # 行動管理機能
@@ -268,23 +397,25 @@ def actionControl( mode ):
     # 行動が終了するまでループ
     while mode < MODE_MAX+1:
         if mode == 1:
-            mode = mode1() # 行動1:出社
+            mode = mode1()  # 行動1:出社
         elif mode == 2:
-            mode = mode2() # 行動2:保安所にあいさつ
+            mode = mode2()  # 行動2:保安所にあいさつ
         elif mode == 3:
-            mode = mode3() # 行動3:仕事の依頼   
+            mode = mode3()  # 行動3:仕事の依頼   
         elif mode == 4:
-            mode = mode4() # 行動4:課長のところへレッツゴー   
+            mode = mode4()  # 行動4:課長のところへレッツゴー   
         elif mode == 5:
-            mode = mode5() # 行動5:課長の様子を伺う   
+            mode = mode5()  # 行動5:課長の様子を伺う   
         elif mode == 6:
-            mode = mode6() # 行動6:課長へお願い   
+            mode = mode6()  # 行動6:課長へお願い   
         elif mode == 7:
-            mode = mode7() # 行動7:依頼者の席へ戻る   
+            mode = mode7()  # 行動7:依頼者の席へ戻る   
         elif mode == 8:
-            mode = mode8() # 行動8:依頼者へ成果物の報告     
+            mode = mode8()  # 行動8:依頼者へ成果物の報告     
         elif mode == 9:
-            mode = mode9() # 行動9:ホームへ戻る 
+            mode = mode9()  # 行動9:保安所に帰りの挨拶 
+        elif mode == 10:
+            mode = mode10() # 行動10:ホームへ戻る 
 
     # 停止命令
     movement(0,1,1)
@@ -300,7 +431,7 @@ if __name__ == "__main__":
     mode = 1
     # モード指定がある場合はモードにコマンドライン引数値を設定
     if(len(sys.argv) == 2):
-        if int(sys.argv[1]) in range(1,MODE_MAX):
+        if int(sys.argv[1]) in range( 1, MODE_MAX ):
             mode = int(sys.argv[1])
 
     # メインスレッド開始

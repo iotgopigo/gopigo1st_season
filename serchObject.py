@@ -24,7 +24,7 @@ def imageRecognition ( mode, keyword, rect ):
 	rect[2] = 320
 	rect[3] = 240
 
-	return True
+	return keyword
 
 def enable_servo():
         return
@@ -95,6 +95,6 @@ def serchObject( mode, keyword ):
 
 # メイン関数
 if __name__ == "__main__":
-	ret = serchObject( 0, "Panasonic" )
+	ret = serchObject( 'LOGO_DETECTION', 'Panasonic' )
 
-	print "dist:%d[deg] direction:%d[cm]" % (ret[0], ret[1])
+	print 'dist:%d[deg] direction:%d[cm]' % (ret[0], ret[1])
