@@ -9,8 +9,12 @@ import time         # 時間処理
 import datetime     # 日時取得
 import sys          # システム
 import logging      # ログ取得
+import random       # ランダム
 #import speak        # 音声合成機能
-import serchObject  # 物体探索機能
+import serchObject as serch  # 物体探索機能
+#import imageRecognition as im # 画像認識機能
+#import audioInput # 音声認識機能
+#import movement as mv # 移動機能
 #------------------------------------------------------
 
 #------------------------------------------------------
@@ -25,39 +29,84 @@ LOGO_DETECTION  = 'LOGO_DETECTION'
 LABEL_DETECTION = 'LABEL_DETECTION'
 FACE_DETECTION  = 'FACE_DETECTION'
 TEXT_DETECTION  = 'TEXT_DETECTION'
-
-
 #------------------------------------------------------
 
 
 #------------------------------------------------------
 # PT用
 #------------------------------------------------------
-def speak(num):
+class Speak:
+    def speak(self, num):
+        text = [
+            "Go to campany!",           #
+            "Good morning!",            #
+            "Sure, I’d be happy to.",   #
+            "I’m freaking out.",        #
+            "I am sorry to bother you while you are busy. Please put a signature.", #
+            "Thank you for putting a signature. Have a nice day, Manager!", #
+            "Sorry to keep you wating. I got a signature.", #
+            "I’m leaving now. See you tomorrow.", #
+            "See you.", #
+            "", #
+            "Not found!", # 
+            "Today is good weather!", #
+            "Today is cloudy.", #
+            "Today's weather is bad.", #
+            "How can I help you?", #
+            "I did a good job today!" #
+            ]
+        if num < 0 or num > 16 :
+            print "out of range"
+        print "[AudioOutput] " + text[num]
+        return
+audioOut = Speak()
 
-    text = {
-            "Go to Campany!",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            }
-    
-    if num < 1 || num > 16 :
-        print "out of range"
+class Audio_Input:
+    def Audio_Input(self, num):
+        text = [
+            "Please get a Manager's signature",
+            "I've done it.",
+            "Thank you. See you.",
+            "It's working time.",
+            "Come on!"
+        ]
+        if num < 0 or num > 5 :
+            print "out of range"
+        print "[AudioInput] " + text[num]
+        return True
+    def Audio_Input_Init(self):
+        return
 
-    print text[num]
-    
-    return
-def Audio_Input(num):
-    return 1
+audioIn = Audio_Input()
+
+class Movement:
+    def movement(self, direction, speed, distance):
+        print "[move] " + "distance:" + str(distance) + ", direction:" + str(direction)
+        return 
+    def Read_move_status(self):
+        return 0
+mv = Movement()
+
+class ImageRecognition:
+    def imageRecognition( self, mode, keyword, rect ):
+        del rect[:]
+        rect.append(-1)
+        rect.append(-1)
+        rect.append(-1)
+        rect.append(-1)
+        rect[0] = 320
+        rect[1] = 240
+        rect[2] = 320+160
+        rect[3] = 240+120
+        print "[ImageRecognition] mode:" + mode + ", keyword:" + keyword
+        if mode == FACE_DETECTION:
+            face = [ "JOY", "SORROW" , "ANGER", "SURPRISE", "-1" ]
+            expression = face[ random.randint(0,4) ]
+            print "face:" + expression
+            return expression
+        else :
+            return keyword
+im = ImageRecognition()
 #------------------------------------------------------
 
 #------------------------------------------------------
@@ -80,12 +129,25 @@ class CtrlThread(threading.Thread):
         print " === end " + self.__class__.__name__ + " === "
 
 #------------------------------------------------------
+# 音声認識待ち
+#------------------------------------------------------
+def audioInputWait(num):
+    # 認識結果初期化
+    audioIn.Audio_Input_Init()
+    # 認識待ち
+    while 1:
+        if audioIn.Audio_Input(num) == True:
+            break
+        time.sleep(0.1)
+    return
+
+#------------------------------------------------------
 # 移動待ち
 #------------------------------------------------------
 def moveWait():
     # 停止するまで監視
     while 1:
-        if Read_move_status() == 0:
+        if mv.Read_move_status() == 0:
             break
         time.sleep(0.5) # 0.5秒待ち
  
@@ -95,28 +157,29 @@ def moveWait():
 # 行動1:出社
 #------------------------------------------------------
 def mode1():
-    # おはようと言われるまで待機
-    while 1:
-        if Audio_Input(1) == 1:
-            break
+    logging.debug("mode1()")
+
+    #  時間だよと言われるまで待機
+    audioInputWait(3)
+
     # 「出社しまーす」と発話 
-    speak(0)
+    audioOut.speak(0)
 
     # Panasonicロゴの探索    
-    ret = serchObject( LOGO_DETECTION, 'Panasonic' ) # 物体探索
+    ret = serch.serchObject( LOGO_DETECTION, 'Panasonic' ) # 物体探索
     # 探索に失敗した場合
     if ret[0] == -1:
         # 「みつからないよ」と発話 
-        speak(10)
+        audioOut.speak(10)
         return 1
 
     # 回転
-    movement( ret[1], 1, 0 )
+    mv.movement( ret[1], 1, 0 )
     # 移動待ち
     moveWait()
 
     # 移動
-    movement( 0 , 1, ret[0] )
+    mv.movement( 0 , 1, ret[0] )
     # 移動待ち
     moveWait()
 
@@ -126,30 +189,31 @@ def mode1():
 # 行動2:保安所にあいさつ
 #------------------------------------------------------
 def mode2():
-
+    logging.debug("mode2()")
+    
     time.sleep(2) # 2秒待ち
 
     # 「おはようございます」と発話 
-    speak(1)    
+    audioOut.speak(1)    
 
     # 天気の認識
     rect = []
-    label = imageRecognition( LABEL_DETECTION, "", rect)   # ラベル認識
-    if label == "sun"
+    label = im.imageRecognition( LABEL_DETECTION, "", rect)   # ラベル認識
+    if label == "sun":
         # 「今日はいい天気ですね」と発話 
-        speak(11)  
-    elif label == "clowd"
+        audioOut.speak(11)  
+    elif label == "clowd":
         # 「今日は曇ってますね」と発話 
-        speak(12)  
-    elif label == "rain"
+        audioOut.speak(12)  
+    elif label == "rain":
         # 「今日は残念な天気ですね」と発話 
-        speak(13)  
-    else
+        audioOut.speak(13)  
+    else :
         # 「みつからないよ」と発話 
-        speak(10)
+        audioOut.speak(10)
      
     # 回転
-    movement( 90, 1, 0 )
+    mv.movement( 90, 1, 0 )
     # 移動待ち
     moveWait()
 
@@ -159,46 +223,42 @@ def mode2():
 # 行動3:仕事の依頼
 #------------------------------------------------------
 def mode3():
-    
+    logging.debug("mode3()")
+
     time.sleep(2) # 2秒待ち
 
     # おいでと言われるまで待機
-    while 1:
-        if Audio_Input(2) == 2:
-            break
+    audioInputWait(4)
 
     # HELPの探索    
-    ret = serchObject( TEXT_DETECTION, "HELP" ) # OCR
+    ret = serch.serchObject( TEXT_DETECTION, "HELP" ) # OCR
     # 探索に失敗した場合
     if ret[0] == -1:
         # 「みつからないよ」と発話 
-        speak(10)
+        audioOut.speak(10)
         return 1
 
     # 回転
-    movement( ret[1], 1, 0 )
+    mv.movement( ret[1], 1, 0 )
     # 移動待ち
     moveWait()
 
     # 移動
-    movement( 0 , 1, ret[0] )
+    mv.movement( 0 , 1, ret[0] )
     # 移動待ち
     moveWait()
 
     # 「おはようございます」と発話 
-    speak(1)    
+    audioOut.speak(1)    
 
     # 「なんでしょう？」と発話 
-    speak(14)    
+    audioOut.speak(14)    
 
     # 課長ハンコと言われるまで待機
-    while 1:
-        if Audio_Input(3) == 3:
-            break
+    audioInputWait(0)
 
     # 「はい、よろこんで」と発話 
-    speak(2)    
-
+    audioOut.speak(2)    
 
     return 4
 
@@ -206,23 +266,25 @@ def mode3():
 # 行動4:課長のところへレッツゴー
 #------------------------------------------------------
 def mode4():
+    logging.debug("mode4()")
+
     time.sleep(2) # 2秒待ち
 
     # 課長の探索    
-    ret = serchObject( TEXT_DETECTION, "課長" ) # 物体探索
+    ret = serch.serchObject( TEXT_DETECTION, "課長" ) # 物体探索
     # 探索に失敗した場合
     if ret[0] == -1:
         # 「みつからないよ」と発話 
-        speak(10)
+        audioOut.speak(10)
         return 4
 
     # 回転
-    movement( ret[1], 1, 0 )
+    mv.movement( ret[1], 1, 0 )
     # 移動待ち
     moveWait()
 
     # 移動
-    movement( 0 , 1, ret[0] )
+    mv.movement( 0 , 1, ret[0] )
     # 移動待ち
     moveWait()
 
@@ -232,49 +294,51 @@ def mode4():
 # 行動5:課長の様子を伺う
 #------------------------------------------------------
 def mode5():
+    logging.debug("mode5()")
+
     time.sleep(2) # 2秒待ち
 
     # 表情の認識
     rect = []
-    label = imageRecognition( FACE_DETECTION, "", rect)   # 表情認識
+    label = im.imageRecognition( FACE_DETECTION, "", rect)   # 表情認識
 
-    if label == "anger"
+    if label == "ANGER":
         # 「やばい、やばい」と発話 
-        speak(3)
+        audioOut.speak(3)
         # 移動
-        movement( 0 , 1, -10 )
+        mv.movement( 0 , 1, -10 )
         # 移動待ち
         moveWait()
         time.sleep(3) # 3秒待ち
         # 移動
-        movement( 0 , 1, 10 )
+        mv.movement( 0 , 1, 10 )
         # 移動待ち
         moveWait()
+        return 5
     elif label == "-1":
         # 「みつからないよ」と発話 
-        speak(10)
+        audioOut.speak(10)
         return 5
-    else
+    else :
         return 6
 
 #------------------------------------------------------
 # 行動6:課長へお願い
 #------------------------------------------------------
 def mode6():
+    logging.debug("mode6()")
 
     # 「お忙しい中申し訳ないですが、はんこいただけますか？」と発話 
-    speak(4)    
+    audioOut.speak(4)    
 
     # 終わったよと言われるまで待機
-    while 1:
-        if Audio_Input(2) == 2:
-            break
+    audioInputWait(1)
     
     # 「ありがとうございます。課長、よい一日を」と発話 
-    speak(5)    
+    audioOut.speak(5)    
       
     # 180度回転
-    movement( 180, 1, 0 )
+    mv.movement( 180, 1, 0 )
     # 移動待ち
     moveWait()
     
@@ -284,23 +348,25 @@ def mode6():
 # 行動7:依頼者の席へ戻る
 #------------------------------------------------------
 def mode7():
+    logging.debug("mode7()")
+
     time.sleep(2) # 2秒待ち
     
     # HELPの探索    
-    ret = serchObject( TEXT_DETECTION, "HELP" ) # 物体探索
+    ret = serch.serchObject( TEXT_DETECTION, "HELP" ) # 物体探索
     # 探索に失敗した場合
     if ret[0] == -1:
         # 「みつからないよ」と発話 
-        speak(10)
+        audioOut.speak(10)
         return 4
 
     # 回転
-    movement( ret[1], 1, 0 )
+    mv.movement( ret[1], 1, 0 )
     # 移動待ち
     moveWait()
 
     # 移動
-    movement( 0 , 1, ret[0] )
+    mv.movement( 0 , 1, ret[0] )
     # 移動待ち
     moveWait()
 
@@ -310,16 +376,15 @@ def mode7():
 # 行動8:依頼者へ成果物の報告
 #------------------------------------------------------
 def mode8():
+    logging.debug("mode8()")
 
     time.sleep(2) # 2秒待ち
     
     # 「お待たせ。はんこもらってきたよ～。」と発話 
-    speak(6)
+    audioOut.speak(6)
 
     # 「ありがとう、バイバイ。」と言われるまで待機
-    while 1:
-        if Audio_Input(3) == 3:
-            break
+    audioInputWait(2)
 
     return 9
 
@@ -327,66 +392,67 @@ def mode8():
 # 行動9:ホームへ戻る
 #------------------------------------------------------
 def mode9():
+    logging.debug("mode9()")
     
     time.sleep(2) # 2秒待ち
     
     # 「今日はもう帰るね～。お先に失礼しま～す。」と発話 
-    speak(7)
+    audioOut.speak(7)
 
     # Panasonicロゴの探索    
-    ret = serchObject( LOGO_DETECTION, 'Panasonic' ) # 物体探索
+    ret = serch.serchObject( LOGO_DETECTION, 'Panasonic' ) # 物体探索
     # 探索に失敗した場合
     if ret[0] == -1:
         # 「みつからないよ」と発話 
-        speak(10)
+        audioOut.speak(10)
         return 9
 
     # 回転
-    movement( ret[1], 1, 0 )
+    mv.movement( ret[1], 1, 0 )
     # 移動待ち
     moveWait()
 
     # 移動
-    movement( 0 , 1, ret[0] )
+    mv.movement( 0 , 1, ret[0] )
     # 移動待ち
     moveWait()
     
     # 「さようならー」と発話 
-    speak(16)
+    audioOut.speak(8)
 
     # -90度回転
-    movement( -90, 1, 0 )
+    mv.movement( -90, 1, 0 )
     # 移動待ち
     moveWait()
 
-    
     return 10
 
 #------------------------------------------------------
 # 行動10:ホームへ戻る
 #------------------------------------------------------
 def mode10():
+    logging.debug("mode10()")
 
     # Nationalロゴの探索    
-    ret = serchObject( LOGO_DETECTION, 'National' ) # 物体探索
+    ret = serch.serchObject( LOGO_DETECTION, 'National' ) # 物体探索
     # 探索に失敗した場合
     if ret[0] == -1:
         # 「みつからないよ」と発話 
-        speak(10)
+        audioOut.speak(10)
         return 10
 
     # 回転
-    movement( ret[1], 1, 0 )
+    mv.movement( ret[1], 1, 0 )
     # 移動待ち
     moveWait()
 
     # 移動
-    movement( 0 , 1, ret[0] )
+    mv.movement( 0 , 1, ret[0] )
     # 移動待ち
     moveWait()
     
     # 「今日も、いい仕事したな～」と発話 
-    speak(15)
+    audioOut.speak(15)
 
     return 11
 
@@ -418,21 +484,23 @@ def actionControl( mode ):
             mode = mode10() # 行動10:ホームへ戻る 
 
     # 停止命令
-    movement(0,1,1)
+    mv.movement(0,1,1)
 
     return
 
 #------------------------------------------------------
 # メイン関数
 #------------------------------------------------------
-if __name__ == "__main__":
-
+def main():
     # 初期モードは1
     mode = 1
     # モード指定がある場合はモードにコマンドライン引数値を設定
     if(len(sys.argv) == 2):
-        if int(sys.argv[1]) in range( 1, MODE_MAX ):
+        if int(sys.argv[1]) in range( 1, MODE_MAX+1 ):
             mode = int(sys.argv[1])
+        else :
+            print "Out of range. sys.argv[1]=" + sys.argv[1]
+            return
 
     # メインスレッド開始
     print " === start main thread (main) === "
@@ -442,3 +510,9 @@ if __name__ == "__main__":
     
     # メインスレッド終了
     print " == end main thread === " 
+
+#------------------------------------------------------
+# スクリプト実行
+#------------------------------------------------------
+if __name__ == "__main__":
+    main()
