@@ -31,6 +31,9 @@ FACE_DETECTION  = 'FACE_DETECTION'
 TEXT_DETECTION  = 'TEXT_DETECTION'
 #------------------------------------------------------
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',
+                    )
 
 #------------------------------------------------------
 # PT用
