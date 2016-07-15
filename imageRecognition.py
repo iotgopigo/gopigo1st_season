@@ -38,10 +38,15 @@ def imageDetermin(photo_file, mode, compStr, rect):
 
 	if mode == 'LOGO_DETECTION':
  		for label_num in range(0, 5): 
-           		label = response['responses'][0]['logoAnnotations'][label_num]['description']
+           		logo = response['responses'][0]['logoAnnotations'][label_num]['description']
 			score = response['responses'][0]['logoAnnotations'][label_num]['score']
-           		print('Found label: %s, score: %f for %s' % (label, score, photo_file))
+           		print('Found logo: %s, score: %f for %s' % (logo, score, photo_file))
+
 	elif mode == 'LABEL_DETECTION':
+		for label_num in range(0, 5): 
+           		label = response['responses'][0]['labelAnnotations'][label_num]['description']
+			score = response['responses'][0]['labelAnnotations'][label_num]['score']
+           		print('Found label: %s, score: %f for %s' % (label, score, photo_file))
 		
 	elif mode == 'FACE_DETECTION':
            	joyVal = response['responses'][0]['faceAnnotations'][0]['joyLikelihood']
@@ -58,11 +63,15 @@ def imageDetermin(photo_file, mode, compStr, rect):
 		else:
 			str = 'SURPRISE'
 
-           	print('face: %s' % str)
-		return str
+		print('face: %s' % str)
+		if compStr == 'JOY':
+			return str
+		else:
+           		return '-1'
 
 	elif mode == 'TEXT_DETECTION':
-
+		txt = response['responses'][0]['textAnnotations'][0]['description']
+		print('txt: %s' % txt)
 
         return 0
 
@@ -70,5 +79,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('image_file', help='The image you\'d like to label.')
     args = parser.parse_args()
-    imageDetermin(args.image_file, mode, str, rect)
+    imageDetermin(args.image_file, 'FACE_DETECTION', 'smile', rect)
 
