@@ -22,6 +22,15 @@ http://server-setting.info/centos/open-jtalk-install.html
 http://qiita.com/kkoba84/items/b828229c374a249965a9
 * ノイズについて
 http://kitatokyo2013.blogspot.jp/2015/02/picoreplayerraspberrypi-b.html
+* 映像出力の無効化
+http://cre027t.jp/raspberry-pi-3/
+```bash
+/opt/vc/bin/tvservice -o 
+```
+↓
+スピーカボタン右クリック
+↓
+HDMIではなくスピーカを選択
 
 ##音声認識
 * julius公式ページ 
