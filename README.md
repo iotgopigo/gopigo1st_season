@@ -20,6 +20,8 @@ http://open-jtalk.sourceforge.net/
 http://server-setting.info/centos/open-jtalk-install.html
 * 使い方
 http://qiita.com/kkoba84/items/b828229c374a249965a9
+* ノイズについて
+http://kitatokyo2013.blogspot.jp/2015/02/picoreplayerraspberrypi-b.html
 
 ##音声認識
 * julius公式ページ 
