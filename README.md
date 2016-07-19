@@ -27,10 +27,8 @@ http://cre027t.jp/raspberry-pi-3/
 ```bash
 /opt/vc/bin/tvservice -o 
 ```
-↓
-スピーカボタン右クリック
-↓
-HDMIではなくスピーカを選択
+→スピーカボタン右クリック
+→HDMIではなくスピーカを選択
 
 ##音声認識
 * julius公式ページ 
