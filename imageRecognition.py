@@ -22,7 +22,7 @@ filename = 'panasonic2.jpg'
 
 def getImage():
     print 'test'
-    return cv2.imread('panasonic2.jpg', 0)
+    return cv2.imread('panasonic2.jpg', 1)
 #
 def imgeDeterminParamCheck(mode):
     if mode == 'LOGO_DETECTION':
@@ -50,11 +50,13 @@ def imageDetermin(mode, compStr, rect):
     #
     """Run a label request on a single image"""
     if inputFlag == True:
-        img = cv2.imread(filename, 0)
+        img = cv2.imread(filename, 1)
     else:
         img = getImage()
     if img is None:
         return '-1'
+
+    img = cv2.resize(img, (int(480.0/img.shape[0]*img.shape[1]), 480) )
 
     #
     credentials         = GoogleCredentials.get_application_default()
@@ -92,9 +94,9 @@ def imageDetermin(mode, compStr, rect):
                 score = annotations[label_num]['score']
                 print('Found label: %s, score: %f' % (label, score))
                 detectList.append(label)
-                if  label == compStr:
+                if compStr in label:
                     detectFlag = True
-                    reStr = label
+                    reStr = compStr
                     break
             if detectFlag == False:
                 reStr = detectList[0]
@@ -108,9 +110,9 @@ def imageDetermin(mode, compStr, rect):
                 score = annotations[label_num]['score']
                 print('Found logo: %s, score: %f' % (logo, score))
                 detectList.append(logo)
-                if  logo == compStr:
+                if compStr in logo:
                     detectFlag = True
-                    reStr = logo
+                    reStr = compStr
                     break
             if detectFlag == False:
                 reStr = detectList[0]
