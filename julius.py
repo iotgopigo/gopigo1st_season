@@ -9,6 +9,5 @@ clientsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 clientsock.connect((host, port))
   
 while True:
-        recv_data = clientsock.recv(512)
+        recv_data = clientsock.recv(1024)
 	print(recv_data)
-	print("ok")

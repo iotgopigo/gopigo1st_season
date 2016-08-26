@@ -10,17 +10,17 @@ import datetime     # 日時取得
 import sys          # システム
 import logging      # ログ取得
 import random       # ランダム
-#import speak        # 音声合成機能
-import serchObject as serch  # 物体探索機能
+import speak        as audioOut # 音声合成機能
+import serchObject  as serch    # 物体探索機能
 #import imageRecognition as im # 画像認識機能
-#import audioInput # 音声認識機能
-#import movement as mv # 移動機能
+import audioInput   as audioIn  # 音声認識機能
+import movement     as mv 	# 移動機能
 #------------------------------------------------------
 
 #------------------------------------------------------
 # パラメータ
 #------------------------------------------------------
-MODE_MAX                = 10   # モードの最大数[1〜MODE_MAX]
+MODE_MAX        = 10   # モードの最大数[1〜MODE_MAX]
 #------------------------------------------------------
 #------------------------------------------------------
 # define
@@ -34,10 +34,12 @@ TEXT_DETECTION  = 'TEXT_DETECTION'
 logging.basicConfig(level=logging.DEBUG,
                     format='(%(threadName)-10s) %(message)s',
                     )
-
+th_voice = None
+th_move = None
 #------------------------------------------------------
 # PT用
 #------------------------------------------------------
+'''
 class Speak:
     def speak(self, num):
         text = [
@@ -63,7 +65,8 @@ class Speak:
         print "[AudioOutput] " + text[num]
         return
 audioOut = Speak()
-
+'''
+'''
 class Audio_Input:
     def Audio_Input(self, num):
         text = [
@@ -81,7 +84,8 @@ class Audio_Input:
         return
 
 audioIn = Audio_Input()
-
+'''
+'''
 class Movement:
     def movement(self, direction, speed, distance):
         print "[move] " + "distance:" + str(distance) + ", direction:" + str(direction)
@@ -89,7 +93,7 @@ class Movement:
     def Read_move_status(self):
         return 0
 mv = Movement()
-
+'''
 class ImageRecognition:
     def imageRecognition( self, mode, keyword, rect ):
         del rect[:]
@@ -112,34 +116,26 @@ class ImageRecognition:
 im = ImageRecognition()
 #------------------------------------------------------
 
-#------------------------------------------------------
-# 継承元制御スレッドクラス
-#------------------------------------------------------
-class CtrlThread(threading.Thread):
-    # 初期化と開始
-    def __init__(self, cycle):
-        super(CtrlThread, self).__init__()
-        self.stop_event = threading.Event() # 停止させるかのフラグ
-        self.cycle = cycle                  # 制御周期の設定
-        # スレッドの開始
-        print " === start " + self.__class__.__name__ + " === "
-        self.start()
-
-    # 停止命令
-    def stop(self):
-        self.stop_event.set()
-        self.join()    # スレッドが停止するのを待つ
-        print " === end " + self.__class__.__name__ + " === "
 
 #------------------------------------------------------
 # 音声認識待ち
 #------------------------------------------------------
 def audioInputWait(num):
+    if num == 1: 
+        print "say 時間だよ"
+    elif num == 2:
+        print "say 課長"
+    elif num == 3:
+        print "say 押した"
+    elif num == 4:
+        print "say バイバイ"
+    elif num == 5:
+        print "say おいで"
     # 認識結果初期化
-    audioIn.Audio_Input_Init()
+    th_voice.getVoiceRecognitionResult(-1)
     # 認識待ち
     while 1:
-        if audioIn.Audio_Input(num) == True:
+        if th_voice.getVoiceRecognitionResult(num) == True:
             break
         time.sleep(0.1)
     return
@@ -149,11 +145,8 @@ def audioInputWait(num):
 #------------------------------------------------------
 def moveWait():
     # 停止するまで監視
-    while 1:
-        if mv.Read_move_status() == 0:
-            break
+    while th_move.read_move_status(): 
         time.sleep(0.5) # 0.5秒待ち
- 
     return 
 
 #------------------------------------------------------
@@ -162,8 +155,8 @@ def moveWait():
 def mode1():
     logging.debug("mode1()")
 
-    #  時間だよと言われるまで待機
-    audioInputWait(3)
+    # 「時間だよ」と言われるまで待機
+    audioInputWait(1)
 
     # 「出社しまーす」と発話 
     audioOut.speak(0)
@@ -177,12 +170,12 @@ def mode1():
         return 1
 
     # 回転
-    mv.movement( ret[1], 1, 0 )
+    th_move.rotation( ret[1], 2 )
     # 移動待ち
     moveWait()
 
     # 移動
-    mv.movement( 0 , 1, ret[0] )
+    th_move.movement( ret[0], 2 )
     # 移動待ち
     moveWait()
 
@@ -216,7 +209,7 @@ def mode2():
         audioOut.speak(10)
      
     # 回転
-    mv.movement( 90, 1, 0 )
+    th_move.rotation( 90, 2 )
     # 移動待ち
     moveWait()
 
@@ -230,8 +223,8 @@ def mode3():
 
     time.sleep(2) # 2秒待ち
 
-    # おいでと言われるまで待機
-    audioInputWait(4)
+    # 「おいで」と言われるまで待機
+    audioInputWait(5)
 
     # HELPの探索    
     ret = serch.serchObject( TEXT_DETECTION, "HELP" ) # OCR
@@ -239,15 +232,15 @@ def mode3():
     if ret[0] == -1:
         # 「みつからないよ」と発話 
         audioOut.speak(10)
-        return 1
+        return 3
 
     # 回転
-    mv.movement( ret[1], 1, 0 )
+    th_move.rotation( ret[1], 2 )
     # 移動待ち
     moveWait()
 
     # 移動
-    mv.movement( 0 , 1, ret[0] )
+    th_move.movement( ret[0], 2 )
     # 移動待ち
     moveWait()
 
@@ -255,10 +248,10 @@ def mode3():
     audioOut.speak(1)    
 
     # 「なんでしょう？」と発話 
-    audioOut.speak(14)    
+    audioOut.speak(9)    
 
-    # 課長ハンコと言われるまで待機
-    audioInputWait(0)
+    # 「課長」と言われるまで待機
+    audioInputWait(2)
 
     # 「はい、よろこんで」と発話 
     audioOut.speak(2)    
@@ -282,12 +275,12 @@ def mode4():
         return 4
 
     # 回転
-    mv.movement( ret[1], 1, 0 )
+    th_move.rotation( ret[1], 2 )
     # 移動待ち
     moveWait()
 
     # 移動
-    mv.movement( 0 , 1, ret[0] )
+    th_move.movement( ret[0], 2 )
     # 移動待ち
     moveWait()
 
@@ -309,12 +302,12 @@ def mode5():
         # 「やばい、やばい」と発話 
         audioOut.speak(3)
         # 移動
-        mv.movement( 0 , 1, -10 )
+        th_move.movement( -10 , 2 )
         # 移動待ち
         moveWait()
         time.sleep(3) # 3秒待ち
         # 移動
-        mv.movement( 0 , 1, 10 )
+        th_move.movement( 10, 2 )
         # 移動待ち
         moveWait()
         return 5
@@ -334,14 +327,14 @@ def mode6():
     # 「お忙しい中申し訳ないですが、はんこいただけますか？」と発話 
     audioOut.speak(4)    
 
-    # 終わったよと言われるまで待機
-    audioInputWait(1)
+    # 「押した」と言われるまで待機
+    audioInputWait(3)
     
     # 「ありがとうございます。課長、よい一日を」と発話 
     audioOut.speak(5)    
       
     # 180度回転
-    mv.movement( 180, 1, 0 )
+    th_move.rotation( 180, 2 )
     # 移動待ち
     moveWait()
     
@@ -361,15 +354,15 @@ def mode7():
     if ret[0] == -1:
         # 「みつからないよ」と発話 
         audioOut.speak(10)
-        return 4
+        return 7
 
     # 回転
-    mv.movement( ret[1], 1, 0 )
+    th_move.rotation( ret[1], 2 )
     # 移動待ち
     moveWait()
 
     # 移動
-    mv.movement( 0 , 1, ret[0] )
+    th_move.movement( ret[0], 2 )
     # 移動待ち
     moveWait()
 
@@ -386,8 +379,8 @@ def mode8():
     # 「お待たせ。はんこもらってきたよ～。」と発話 
     audioOut.speak(6)
 
-    # 「ありがとう、バイバイ。」と言われるまで待機
-    audioInputWait(2)
+    # 「バイバイ」と言われるまで待機
+    audioInputWait(4)
 
     return 9
 
@@ -411,20 +404,20 @@ def mode9():
         return 9
 
     # 回転
-    mv.movement( ret[1], 1, 0 )
+    th_move.rotation( ret[1], 2 )
     # 移動待ち
     moveWait()
 
     # 移動
-    mv.movement( 0 , 1, ret[0] )
+    th_move.movement( ret[0], 2 )
     # 移動待ち
     moveWait()
     
     # 「さようならー」と発話 
-    audioOut.speak(8)
+    audioOut.speak(14)
 
     # -90度回転
-    mv.movement( -90, 1, 0 )
+    th_move.rotation( -90, 2 )
     # 移動待ち
     moveWait()
 
@@ -445,17 +438,17 @@ def mode10():
         return 10
 
     # 回転
-    mv.movement( ret[1], 1, 0 )
+    th_move.rotation( ret[1], 2 )
     # 移動待ち
     moveWait()
 
     # 移動
-    mv.movement( 0 , 1, ret[0] )
+    th_move.movement( ret[0], 2 )
     # 移動待ち
     moveWait()
     
     # 「今日も、いい仕事したな～」と発話 
-    audioOut.speak(15)
+    audioOut.speak(8)
 
     return 11
 
@@ -487,7 +480,7 @@ def actionControl( mode ):
             mode = mode10() # 行動10:ホームへ戻る 
 
     # 停止命令
-    mv.movement(0,1,1)
+    th_move.move_stop()
 
     return
 
@@ -518,4 +511,14 @@ def main():
 # スクリプト実行
 #------------------------------------------------------
 if __name__ == "__main__":
-    main()
+	th_voice = audioIn.voiceThread( 0.05 )
+	
+	# 移動機能スレッド生成
+	th_move = mv.movementThread( mv.CHECK_MOVE_CYCLE )
+ 
+   	main()
+
+	# 移動機能スレッドの停止
+	th_move.stop()
+
+    	th_voice.stop()
