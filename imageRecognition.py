@@ -8,9 +8,12 @@ import urllib2, json
 import numpy as np
 import cv2
 import sys
+import time
 
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 
 #
 # The url template to retrieve the discovery document for trusted testers.
@@ -21,8 +24,33 @@ inputFlag = False
 filename = 'panasonic2.jpg'
 
 def getImage():
-    print 'test'
-    return cv2.imread('panasonic2.jpg', 1)
+     # initialize the camera and grab a reference to the raw camera capture
+     camera = PiCamera()
+     camera.resolution = (640, 480)
+     camera.framerate = 32
+     rawCapture = PiRGBArray(camera, size=(640, 480))
+
+     # print("setting is end!")
+
+     # allow the camera to warmup
+     # time.sleep(0.1)
+     dst = None
+     # capture frames from the camera
+     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+	# grab the raw NumPy array representing the image, then initialize the timestamp
+	# and occupied/unoccupied text
+	image = frame.array
+
+	mtx =np.array([[100, 0, 320], [0, 100, 240], [0, 0, 1]], dtype=np.float32)  
+	dist = np.array([-0.009, 0.0, 0.0, 0.0], dtype=np.float32)
+	h,  w = image.shape[:2]
+	newcameramtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
+	# undistort
+	dst = cv2.undistort(image, mtx, dist, None, newcameramtx)
+       break
+
+     return dst
+
 #
 def imgeDeterminParamCheck(mode):
     if mode == 'LOGO_DETECTION':
