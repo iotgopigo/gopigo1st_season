@@ -12,6 +12,8 @@ GoPiGo2を使用
 http://www.dexterindustries.com/gopigo2-tutorials-documentation/
 * 関数一覧
 https://github.com/DexterInd/GoPiGo/blob/master/Software/Python/gopigo.py
+* SDカードに新規インストールする方法
+http://www.dexterindustries.com/howto/install-raspbian-for-robots-image-on-an-sd-card/
 
 ##音声合成
 * Open JTalk公式ページ 
